@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>View Contact</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://unpkg.com/tailwindcss@3.3.3/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 min-h-screen">
+	<div class="container mx-auto py-10 px-4">
+		<!-- Page Header -->
+		<h1 class="text-4xl font-bold text-center text-gray-800 mb-6">Contact Details</h1>
+		
+		<!-- Contact Card -->
+		<div class="max-w-4xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
+			<div class="grid grid-cols-1 md:grid-cols-3">
+				<!-- Profile Image Section -->
+				<div class="bg-gradient-to-r from-indigo-500 to-purple-500 p-6 flex justify-center items-center">
+					<img th:src="@{'/contact-image/' + ${contact.cId}}" alt="Contact Image"
+						class="w-40 h-40 rounded-full border-4 border-white shadow-lg">
+				</div>
+				
+				<!-- Contact Info Section -->
+				<div class="col-span-2 p-6">
+					<h2 class="text-3xl font-semibold text-gray-800 mb-4" th:text="${contact.name}"></h2>
+					<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+						<div>
+							<p class="text-gray-600 font-medium">Nickname:</p>
+							<p class="text-gray-800" th:text="${contact.nickname}"></p>
+						</div>
+						<div>
+							<p class="text-gray-600 font-medium">Phone:</p>
+							<p class="text-gray-800" th:text="${contact.phone}"></p>
+						</div>
+						<div>
+							<p class="text-gray-600 font-medium">Email:</p>
+							<p class="text-blue-600 hover:underline" th:text="${contact.email}"></p>
+						</div>
+						<div>
+							<p class="text-gray-600 font-medium">Work:</p>
+							<p class="text-gray-800" th:text="${contact.work}"></p>
+						</div>
+						<div class="sm:col-span-2">
+							<p class="text-gray-600 font-medium">Description:</p>
+							<p class="text-gray-800" th:text="${contact.description}"></p>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- Edit Button -->
+			<div class="bg-gray-100 p-4 flex justify-end">
+				<a th:href="@{'/edit-contact/' + ${contact.cId}}" class="px-6 py-2 bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-semibold rounded-md shadow-md hover:from-indigo-500 hover:to-purple-500 hover:shadow-lg">
+					Edit Contact
+				</a>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

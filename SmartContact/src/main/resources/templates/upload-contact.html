@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Upload Contact</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://unpkg.com/tailwindcss@3.3.3/dist/tailwind.min.css"
+	rel="stylesheet">
+</head>
+<body
+	class="bg-gradient-to-br from-indigo-500 via-emerald-400 to-blue-500 min-h-screen p-4 flex flex-col">
+
+
+	<!-- Form Container -->
+	<div class="flex-1 flex items-center justify-center">
+		<div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-2xl">
+			<h1 class="text-3xl font-bold text-gray-800 text-center mb-6">Upload
+				Contact</h1>
+
+			<form action="/submit-contact" method="POST"
+				enctype="multipart/form-data" class="space-y-6">
+				<!-- Name -->
+				<div>
+					<label for="name" class="block text-gray-700 font-medium mb-2">Name</label>
+					<input type="text" id="name" name="name"
+						placeholder="Enter full name"
+						class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring focus:ring-emerald-300">
+				</div>
+
+				<!-- Nickname -->
+				<div>
+					<label for="nickname" class="block text-gray-700 font-medium mb-2">Nickname</label>
+					<input type="text" id="nickname" name="nickname"
+						placeholder="Enter nickname"
+						class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring focus:ring-indigo-300">
+				</div>
+
+				<!-- Work -->
+				<div>
+					<label for="work" class="block text-gray-700 font-medium mb-2">Work</label>
+					<input type="text" id="work" name="work"
+						placeholder="Enter work title"
+						class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring focus:ring-blue-300">
+				</div>
+
+				<!-- Email -->
+				<div>
+					<label for="email" class="block text-gray-700 font-medium mb-2">Email</label>
+					<input type="email" id="email" name="email"
+						placeholder="Enter email address"
+						class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring focus:ring-emerald-300">
+				</div>
+
+				<!-- Phone Number -->
+				<div>
+					<label for="phone" class="block text-gray-700 font-medium mb-2">Phone
+						Number</label> <input type="tel" id="phone" name="phone"
+						placeholder="Enter phone number"
+						class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring focus:ring-indigo-300">
+				</div>
+
+				<!-- Image -->
+				<div>
+					<label for="image" class="block text-gray-700 font-medium mb-2">Profile
+						Picture</label> <input type="file" id="image" name="image"
+						class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring focus:ring-blue-300">
+				</div>
+
+				<!-- Description -->
+				<div>
+					<label for="description"
+						class="block text-gray-700 font-medium mb-2">Description</label>
+					<textarea id="description" name="description"
+						placeholder="Enter a short description"
+						class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring focus:ring-emerald-300"></textarea>
+				</div>
+				<input type="number" th:value="${id}" name="id" class="hidden">
+
+				<!-- Submit Button -->
+				<div class="text-center">
+					<button type="submit"
+						class="bg-gradient-to-r from-indigo-500 to-emerald-500 text-white font-semibold px-6 py-3 rounded-lg hover:from-indigo-400 hover:to-emerald-400 transition-all">
+						Submit</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+</body>
+</html>
