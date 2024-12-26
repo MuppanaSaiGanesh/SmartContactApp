@@ -4,6 +4,8 @@ import java.util.Random;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -25,6 +27,7 @@ public class Contact {
 	private MultipartFile file;
 	
 	@ManyToOne
+	@JsonIgnore
 	private User user;
 	
 	@PrePersist

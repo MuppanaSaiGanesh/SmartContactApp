@@ -7,6 +7,12 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://unpkg.com/tailwindcss@3.3.3/dist/tailwind.min.css"
 	rel="stylesheet">
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script
+  src="https://code.jquery.com/jquery-3.7.1.min.js"
+  integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+  crossorigin="anonymous"></script>
 </head>
 <body
 	class="bg-gradient-to-br from-indigo-500 via-emerald-400 to-blue-500 min-h-screen p-4 flex flex-col justify-between">
@@ -63,18 +69,16 @@
 		<div class="container mx-auto flex justify-between items-center p-4">
 			<a href="#" class="text-2xl font-bold">SmartContacts</a>
 			<ul class="hidden md:flex items-center space-x-6">
-				<li><a href="#about" class="hover:text-gray-300">Show
-						Contacts</a></li>
-				<li><a href="#contact" class="hover:text-gray-300">upload
-						contact</a></li>
+				<li><a href="#about" class="hover:text-gray-300">Show Contacts</a></li>
+				<li><a href="#contact" class="hover:text-gray-300">Upload Contact</a></li>
 			</ul>
 			<div class="flex items-center space-x-4">
 				<!-- Profile Picture -->
-				<a th:href="@{'/view-profile/'+ ${id}}"><img th:src="'data:image/jpeg;base64,' + ${image}"
-					alt="User Profile Picture" style="width: 50px; height: 50px;"
-					class=" rounded-full ring-2 ring-white">
+				<a th:href="@{'/view-profile/'+ ${id}}">
+					<img th:src="'data:image/jpeg;base64,' + ${image}"
+						alt="User Profile Picture" style="width: 50px; height: 50px;"
+						class="rounded-full ring-2 ring-white">
 				</a>
-
 				<!-- Logout Button -->
 				<button onclick="window.location.href='/logout'"
 					class="bg-emerald-500 px-4 py-2 rounded hover:bg-emerald-400">Logout</button>
@@ -85,39 +89,134 @@
 	<!-- Welcome Container -->
 	<div
 		class="bg-white shadow-lg rounded-lg p-6 my-5 mx-auto max-w-lg w-full text-center">
-		<h1 class="text-3xl font-bold text-gray-800 mb-6">Welcome to
-			SmartContacts</h1>
-		<p class="text-gray-600 mb-8">Manage your contacts efficiently
-			with just a few clicks</p>
+		<h1 class="text-3xl font-bold text-gray-800 mb-6">Welcome to SmartContacts</h1>
+		<p class="text-gray-600 mb-8">Manage your contacts efficiently with just a few clicks</p>
 
 		<!-- Buttons Container -->
 		<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-			<!-- Show Contacts Button -->
-			<!-- <button onclick="window.location.href='/show-contacts'"
-				class="bg-gradient-to-r from-emerald-500 to-blue-500 text-white font-semibold p-4 rounded-lg hover:from-emerald-400 hover:to-blue-400 transition-all">
-				Show Contacts</button> -->
 			<a th:href="@{'/show-contacts/'+${id}}"
-				class="bg-gradient-to-r from-emerald-500 to-blue-500 text-white font-semibold p-4 rounded-lg hover:from-emerald-400 hover:to-blue-400 transition-all">Show
-				Contacts</a>
-			<!-- Upload Contact Button -->
-			<!-- <button onclick="window.location.href='/upload-contact/[[${id}]]'"
-				class="bg-gradient-to-r from-indigo-500 to-violet-500 text-white font-semibold p-4 rounded-lg hover:from-indigo-400 hover:to-violet-400 transition-all">
-				Upload Contact</button> -->
+				class="bg-gradient-to-r from-emerald-500 to-blue-500 text-white font-semibold p-4 rounded-lg hover:from-emerald-400 hover:to-blue-400 transition-all">Show Contacts</a>
 			<a th:href="@{'/upload-contact/' + ${id}}"
-				class="bg-gradient-to-r from-indigo-500 to-violet-500 text-white font-semibold p-4 rounded-lg hover:from-indigo-400 hover:to-violet-400 transition-all">
-				Upload Contact </a>
+				class="bg-gradient-to-r from-indigo-500 to-violet-500 text-white font-semibold p-4 rounded-lg hover:from-indigo-400 hover:to-violet-400 transition-all">Upload Contact</a>
 		</div>
 	</div>
+
+	<!-- Donation Container -->
+	<div class="bg-white shadow-lg rounded-lg p-6 my-5 mx-auto max-w-lg w-full text-center">
+		<h2 class="text-2xl font-bold text-gray-800 mb-4">Support Us</h2>
+		<p class="text-gray-600 mb-4">Your donations help us improve our services.</p>
+		<div class="flex justify-center items-center space-x-4">
+			<input type="number" id="donationAmount" class="border border-gray-300 rounded-lg p-2 w-2/3" placeholder="Enter Amount">
+			<button onclick="paymentStart()" class="bg-green-500 text-white font-semibold p-2 rounded-lg hover:bg-green-400">Checkout</button>
+		</div>
+	</div>
+
+	<script>
+		const paymentStart =()=> {
+			var amount = document.getElementById('donationAmount').value;
+			if (amount && amount > 0) {				
+				Swal.fire({
+					  title: "Good job!",
+					  text: `Thank you for donating ₹${amount}!`,
+					  icon: "success"
+					});
+				
+				
+				
+			} else {
+				alert('Please enter a valid amount.');
+			}
+			
+			
+			$.ajax(
+					{
+						url:'/user/create_order',
+						data:JSON.stringify({amount:amount, info:'order_request'}),
+						contentType:'application/json',
+						type:'POST',
+						dataType:'json',
+						success:function(response){
+							console.log(response);
+							if(response.status=='created'){
+								let options={
+									key:'rzp_test_kfwamSmSdvBtMu',
+									amount:response.amount,
+									currency:'INR',
+									name:'Ganesh`s Smart Contact Manager',
+									description:'Donation',
+									image:'https://tinypng.com/images/social/website.jpg',
+									order_id:response.id,
+									handler:function(response){
+												console.log(response.razorpay_payment_id);
+												console.log(response.razorpay_payment_order_id);
+												console.log(response.razorpay_signature);
+												console.log("Payment successful..");
+												Swal.fire({
+													  title: "Good job!",
+													  text: "congrats!! payment Successful !!",
+													  icon: "success"
+													});
+											},
+									prefill: { /* //We recommend using the prefill parameter to auto-fill customer's contact information especially their phone number */
+								        name: "", //your customer's name
+								        email: "",
+								        contact: "" //Provide the customer's phone number for better conversion rates 
+								    },
+								    notes: {
+								        address: "Ganesh`s learning"
+								    },
+								    theme: {
+								        color: "#3399cc"
+								    }
+								
+								};
+								
+								let rzp=new Razorpay(options);
+								
+								rzp.on("payment.failed", function(response){
+															console.log(response.error.code);
+															console.log(response.error.description);
+															console.log(response.error.source);
+															console.log(response.error.step);
+															console.log(response.error.reason);
+															console.log(response.error.metadata.order_id);
+															console.log(response.error.metadata.payment_id);
+															/* alert(''); */
+															Swal.fire({
+																  icon: "error",
+																  title: "Oops...",
+																  text: "Oops payment failed!!",
+																  footer: '<a href="#">Why do I have this issue?</a>'
+																});
+														});
+								rzp.open();
+							}
+							
+						},
+						error:function(error){
+							console.log(error);
+							Swal.fire({
+								  icon: "error",
+								  title: "Oops...",
+								  text: "something went wrong!!",
+								  footer: '<a href="#">Why do I have this issue?</a>'
+								});
+						}
+						
+					})
+		}
+		
+		
+	</script>
 
 	<!-- Footer -->
 	<footer class="bg-gray-800 text-white py-6 mt-auto">
 		<div class="container mx-auto text-center">
-			<p class="text-sm">© 2024 Smart Contact Controller. All rights
-				reserved.</p>
+			<p class="text-sm">© 2024 Smart Contact Controller. All rights reserved.</p>
 			<div class="flex justify-center space-x-6 mt-4">
-				<a href="#" class="hover:text-gray-400">Facebook</a> <a href="#"
-					class="hover:text-gray-400">Twitter</a> <a href="#"
-					class="hover:text-gray-400">LinkedIn</a>
+				<a href="#" class="hover:text-gray-400">Facebook</a>
+				<a href="#" class="hover:text-gray-400">Twitter</a>
+				<a href="#" class="hover:text-gray-400">LinkedIn</a>
 			</div>
 		</div>
 	</footer>

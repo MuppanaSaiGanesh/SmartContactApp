@@ -14,8 +14,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -23,6 +23,7 @@ import com.smart.dao.ContactRepository;
 import com.smart.dao.UserRepository;
 import com.smart.entity.Contact;
 import com.smart.entity.User;
+import com.smart.service.EmailService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -34,6 +35,9 @@ public class HomeController {
 
 	@Autowired
 	private ContactRepository contactRepo;
+	
+	@Autowired
+	private EmailService emailService;
 
 	@GetMapping("/home")
 	public String test() {
@@ -45,13 +49,18 @@ public class HomeController {
 		return "register";
 	}
 
-	@RequestMapping("/registerHandler")
+	@RequestMapping("/registerhandler")
 	public String registerHandler(@RequestParam("name") String name, @RequestParam("email") String email,
 			@RequestParam("password") String password, @RequestParam("image") MultipartFile file,
 			@RequestParam("about") String about, RedirectAttributes redirectAttributes) throws IOException {
 		User user = new User(name, email, password, file.getBytes(), about);
 		if (userRepo.save(user) != null) {
-			redirectAttributes.addFlashAttribute("message", "Registration successful!");
+			// Send confirmation email
+			String subject = "Registration Successful";
+			String body = "Dear " + user.getName() + ",\n\nThank you for registering at SmartConnect!";
+	        emailService.sendEmail(user.getEmail(), subject, body);
+			redirectAttributes.addFlashAttribute("message", subject);
+			
 		} else {
 			redirectAttributes.addFlashAttribute("message", "Registration failed!");
 		}
@@ -66,18 +75,22 @@ public class HomeController {
 
 	@RequestMapping("/loginHandler")
 	public String loginHandler(@RequestParam("email") String email, @RequestParam("password") String password,
-			RedirectAttributes redirectAttributes, HttpSession session) {
-		User user = userRepo.findByEmail(email);
-		if (user != null && password.equals(user.getPassword())) {
-			redirectAttributes.addFlashAttribute("message", "Login successfull..");
-			session.setAttribute("user", user);
-//			redirectAttributes.addAttribute("user", user);
-			return "redirect:welcome";
-		}
+	        RedirectAttributes redirectAttributes, HttpSession session) {
 
-		redirectAttributes.addFlashAttribute("message", "Invalid Login Credentials..");
-		return "redirect:login";
+	    System.out.println("Email: " + email);  // Add logs for debugging
+	    System.out.println("Password: " + password);
+	    
+	    User user = userRepo.findByEmail(email);
+	    if (user != null && password.equals(user.getPassword())) {
+	        redirectAttributes.addFlashAttribute("message", "Login successful..");
+	        session.setAttribute("user", user);
+	        return "redirect:/welcome"; // Redirect to the welcome page
+	    }
+
+	    redirectAttributes.addFlashAttribute("message", "Invalid Login Credentials..");
+	    return "redirect:/login"; // Redirect back to the login page on failure
 	}
+
 
 	@RequestMapping("/welcome")
 	public String welcome(Model model, HttpSession session) {
